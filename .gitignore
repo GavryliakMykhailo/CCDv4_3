@@ -1,0 +1,31 @@
+# MATLAB backup files
+*.asv
+*.m~
+
+# Data files (large)
+*.mat
+*.csv
+*.xlsx
+*.xls
+
+# Results folders
+Results_*/
+Results/
+temp/
+output/
+data/
+
+# System files
+.DS_Store
+Thumbs.db
+*.log
+
+# IDE
+.vscode/
+*.swp
+*.swo
+
+# Temporary files
+*~
+*.tmp
+*.bak
