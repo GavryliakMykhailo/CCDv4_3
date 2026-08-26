@@ -10,7 +10,7 @@ disp('Початок обробки: CCD_v4_Combined...');
 
 % 1. Налаштування шляхів збереження
 base_path ='D:\MyDoc\Programming\mathematik\MyProg\UshenkoOG\Results\Experiment_7_08_26'; % Можете змінити на свій шлях
-main_folder_name = 'test_data_2';
+main_folder_name = 'М_яз живота_2_XY';
 save_data_flag = true; % Змініть на false, щоб вимкнути збереження .mat файлів
 
 % 2. Визначення діапазонів фаз для обробки (10 фазових вибірок від 0-2π до 0-0.25π)
@@ -58,9 +58,10 @@ for p_idx = 1:size(phase_ranges, 1)
     ex_0 = evalin('base', 'ex_0');
     ey_0 = evalin('base', 'ey_0');
     amp_total_0 = sqrt(abs(ex_0).^2 + abs(ey_0).^2);
-%     nearest_coords = find_contrast_nearest_neighbors(amp_total_0, "row_step", 5);
-%     nearest_coords = find_contrast_nearest_neighbors(amp_total_0, "first_non_nan");
-    nearest_coords = find_contrast_nearest_neighbors(amp_total_0, "row_step", 1);
+
+%     nearest_coords = find_contrast_nearest_neighbors(amp_total_0, "row_step", 1);    
+%     nearest_coords = find_contrast_nearest_neighbors(amp_total_0, "col_step", 1);
+    nearest_coords = find_contrast_nearest_neighbors(amp_total_0, "diag_down", 1);
    
     for s_idx = 1:length(states)
         state_name = states(s_idx);
@@ -499,7 +500,9 @@ function plot_skeleton_and_contours(~, alpha_mod, alpha_arg, beta_mod, beta_arg,
     imagesc(alpha_mod); axis image; colorbar;
     colormap(gca, 'jet');
     hold on;
-    contour(alpha_mod, 10, 'k-', 'LineWidth', 0.5);
+    alpha_mod_clean = alpha_mod;
+    alpha_mod_clean(isnan(alpha_mod_clean)) = mean(alpha_mod_clean, 'all', 'omitnan');
+    contour(alpha_mod_clean, 10, 'k-', 'LineWidth', 0.5);
     hold off;
     title(sprintf('Контури α Модуль'));
     
@@ -519,7 +522,9 @@ function plot_skeleton_and_contours(~, alpha_mod, alpha_arg, beta_mod, beta_arg,
     imagesc(alpha_arg); axis image; colorbar;
     colormap(gca, 'jet');
     hold on;
-    contour(alpha_arg, 10, 'k-', 'LineWidth', 0.5);
+    alpha_arg_clean = alpha_arg;
+    alpha_arg_clean(isnan(alpha_arg_clean)) = mean(alpha_arg_clean, 'all', 'omitnan');
+    contour(alpha_arg_clean, 10, 'k-', 'LineWidth', 0.5);
     hold off;
     title(sprintf('Контури α Аргумент'));
     
@@ -540,7 +545,9 @@ function plot_skeleton_and_contours(~, alpha_mod, alpha_arg, beta_mod, beta_arg,
     imagesc(beta_mod); axis image; colorbar;
     colormap(gca, 'jet');
     hold on;
-    contour(beta_mod, 10, 'k-', 'LineWidth', 0.5);
+    beta_mod_clean = beta_mod;
+    beta_mod_clean(isnan(beta_mod_clean)) = mean(beta_mod_clean, 'all', 'omitnan');
+    contour(beta_mod_clean, 10, 'k-', 'LineWidth', 0.5);
     hold off;
     title(sprintf('Контури β Модуль'));
     
@@ -560,7 +567,9 @@ function plot_skeleton_and_contours(~, alpha_mod, alpha_arg, beta_mod, beta_arg,
     imagesc(beta_arg); axis image; colorbar;
     colormap(gca, 'jet');
     hold on;
-    contour(beta_arg, 10, 'k-', 'LineWidth', 0.5);
+    beta_arg_clean = beta_arg;
+    beta_arg_clean(isnan(beta_arg_clean)) = mean(beta_arg_clean, 'all', 'omitnan');
+    contour(beta_arg_clean, 10, 'k-', 'LineWidth', 0.5);
     hold off;
     title(sprintf('Контури β Аргумент'));
 end
