@@ -10,7 +10,7 @@ disp('Початок обробки: CCD_v4_Combined...');
 
 % 1. Налаштування шляхів збереження
 base_path ='D:\MyDoc\Programming\mathematik\MyProg\UshenkoOG\Results\Experiment_7_08_26'; % Можете змінити на свій шлях
-main_folder_name = 'М_яз живота_2_XY';
+main_folder_name = 'Мозг_2_OX';
 save_data_flag = true; % Змініть на false, щоб вимкнути збереження .mat файлів
 
 % 2. Визначення діапазонів фаз для обробки (10 фазових вибірок від 0-2π до 0-0.25π)
@@ -59,9 +59,9 @@ for p_idx = 1:size(phase_ranges, 1)
     ey_0 = evalin('base', 'ey_0');
     amp_total_0 = sqrt(abs(ex_0).^2 + abs(ey_0).^2);
 
-%     nearest_coords = find_contrast_nearest_neighbors(amp_total_0, "row_step", 1);    
+    nearest_coords = find_contrast_nearest_neighbors(amp_total_0, "row_step", 1);    
 %     nearest_coords = find_contrast_nearest_neighbors(amp_total_0, "col_step", 1);
-    nearest_coords = find_contrast_nearest_neighbors(amp_total_0, "diag_down", 1);
+%     nearest_coords = find_contrast_nearest_neighbors(amp_total_0, "diag_down", 1);
    
     for s_idx = 1:length(states)
         state_name = states(s_idx);

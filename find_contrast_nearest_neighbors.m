@@ -49,6 +49,54 @@ function nearest_coords = find_contrast_nearest_neighbors(amp_total, mode, step)
             nearest_coords(:,:,1) = target_Y;
             nearest_coords(~repmat(valid_mask, [1, 1, 2])) = NaN;
 
+        case "diag_down"
+            % Зміщення по діагоналі вниз-праворуч (↘)
+            if nargin < 3 || isempty(step)
+                step = 1;
+            end
+            
+            % Координата Y (рядок) зміщується на величину step
+            Y_indices = repmat((1:M)', 1, N);
+            target_Y = Y_indices + step;
+            
+            % Координата X (стовпчик) зміщується на величину step
+            X_indices = repmat(1:N, M, 1);
+            target_X = X_indices + step;
+            
+            % Перевірка виходу за межі матриці
+            valid_mask_Y = (target_Y >= 1) & (target_Y <= M);
+            valid_mask_X = (target_X >= 1) & (target_X <= N);
+            valid_mask = valid_mask_Y & valid_mask_X;
+            
+            % Запис координат та занулення виходів за межі
+            nearest_coords(:,:,1) = target_Y;
+            nearest_coords(:,:,2) = target_X;
+            nearest_coords(~repmat(valid_mask, [1, 1, 2])) = NaN;
+
+        case "diag_up"
+            % Зміщення по діагоналі вверх-праворуч (↗)
+            if nargin < 3 || isempty(step)
+                step = 1;
+            end
+            
+            % Координата Y (рядок) зміщується на величину -step (вверх)
+            Y_indices = repmat((1:M)', 1, N);
+            target_Y = Y_indices - step;
+            
+            % Координата X (стовпчик) зміщується на величину step (праворуч)
+            X_indices = repmat(1:N, M, 1);
+            target_X = X_indices + step;
+            
+            % Перевірка виходу за межі матриці
+            valid_mask_Y = (target_Y >= 1) & (target_Y <= M);
+            valid_mask_X = (target_X >= 1) & (target_X <= N);
+            valid_mask = valid_mask_Y & valid_mask_X;
+            
+            % Запис координат та занулення виходів за межі
+            nearest_coords(:,:,1) = target_Y;
+            nearest_coords(:,:,2) = target_X;
+            nearest_coords(~repmat(valid_mask, [1, 1, 2])) = NaN;
+
         case "full"
             delta_A = 1.0 * std(amp_total(:), 'omitnan');
             max_r = 50;
@@ -62,21 +110,25 @@ function nearest_coords = find_contrast_nearest_neighbors(amp_total, mode, step)
                     found = false;
                     
                     for r = 1:max_r
-                        dr_i = [-r:r,  r*ones(1,2*r-1), r:-1:-r, -r*ones(1,2*r-1)];
-                        dr_j = [r*ones(1,2*r), r-1:-1:-r, -r*ones(1,2*r-1), -r+1:r-1];
-                        
-                        for k = 1:length(dr_i)
-                            ii = i + dr_i(k);
-                            jj = j + dr_j(k);
-                            
-                            if ii >= 1 && ii <= M && jj >= 1 && jj <= N
-                                if ~isnan(amp_total(ii,jj)) && abs(val - amp_total(ii,jj)) > delta_A
-                                    out_y(i,j) = ii;
-                                    out_x(i,j) = jj;
-                                    found = true;
-                                    break;
+                        % Перебираємо всі точки на кільці радіусу r
+                        for di = -r:r
+                            for dj = -r:r
+                                % Перевіряємо, чи точка на кільці (не всередині)
+                                if max(abs(di), abs(dj)) == r
+                                    ii = i + di;
+                                    jj = j + dj;
+                                    
+                                    if ii >= 1 && ii <= M && jj >= 1 && jj <= N
+                                        if ~isnan(amp_total(ii,jj)) && abs(val - amp_total(ii,jj)) > delta_A
+                                            out_y(i,j) = ii;
+                                            out_x(i,j) = jj;
+                                            found = true;
+                                            break;
+                                        end
+                                    end
                                 end
                             end
+                            if found, break; end
                         end
                         if found, break; end
                     end
